@@ -2,5 +2,7 @@
 Programacion Concurrente 2020 (UNCo)
 
 
-____TP Excepciones___
-P6 (Hecho)
+___TP Excepciones___
+
+
+Punto 6 (Hecho)
