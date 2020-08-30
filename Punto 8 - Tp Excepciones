@@ -1,0 +1,72 @@
+package TP2.EJ_8.PruebExc;
+import java.util.Scanner;
+import java.util.*;
+/**
+ *
+ * @author jerem
+ */
+class PruebaExcep {
+    public static void main(String[] args){
+        Scanner scan = new Scanner(System.in);
+        
+        System.out.print("Ingrese una Edad: ");
+        receptorEdad(scan.nextInt());
+        
+        System.out.print("\nApueste a un numero: ");
+        apostarA(scan.nextInt());
+        
+        coleccionExcep();
+    }
+    
+    private static void receptorEdad(int edad){
+        /*
+        * Metodo que recibe edad, en caso de ser menor lanza una excepcion
+        */
+        System.out.println("El programa esta verificando su edad..\n");
+        
+        if(edad >= 18)
+            System.out.println("Puede continuar");
+        else
+            throw new RuntimeException("Es menor de edad");
+    }
+    
+    private static void apostarA(int num){
+        /*
+        * Metodo que recibe un numero, y si no sale en la ruleta lanza una excepcion
+        */
+        int numRuleta;
+        
+        numRuleta = (int)(Math.random() * (36 + 1));
+        
+        if(num < 0 && num > 36)
+            throw new RuntimeException("Ha elegido un numero incorrecto");
+        else{
+            if(num != numRuleta)
+                throw new RuntimeException("Su numero no ha salido");
+            else
+                System.out.println("BIEN JUGADO");
+        }
+    }
+    
+    private static void coleccionExcep(){
+        /*
+        * Pedir 5 numeros, ponerlos en una coleccion y luego mostrar 7 numeros de la coleccion
+        */
+        Scanner scan = new Scanner(System.in);
+        LinkedList list = new LinkedList();
+        
+        for(int i = 1; i <= 5; i++){
+            System.out.print("\nIngrese un nuevo numero: ");
+            list.add(scan.nextInt());
+        }
+        
+        Iterator iter = list.iterator();
+        
+        for(int j = 0; j <= 7; j++){
+            if(iter.hasNext())
+                System.out.println((int) iter.next());
+            else
+                throw new RuntimeException("PARA MASTER, NO HAY TANTOS NUMEROS EN LA COLECCION");
+        }
+    }
+}
