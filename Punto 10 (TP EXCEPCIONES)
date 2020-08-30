@@ -1,0 +1,190 @@
+public class ProductoVencido extends Exception{
+
+    public ProductoVencido() {
+    }
+
+    public ProductoVencido(String message) {
+        super(message);
+    }
+
+    public ProductoVencido(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ProductoVencido(Throwable cause) {
+        super(cause);
+    }
+
+    public ProductoVencido(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+}
+
+import java.util.*;
+import TP1.EJ_2.Puerto.Fecha;
+/**
+ *
+ * @author jerem
+ */
+public class Agroalimentaria {
+    private Collection productos;
+    
+    public Agroalimentaria(){
+        this.productos = new LinkedList();
+    }
+    
+    public Collection juntarProductosVencidos(){
+        Iterator iter = productos.iterator();
+        LinkedList vencidos = new LinkedList();
+        Fecha hoy = new Fecha(30,8,2020);
+       
+        while(iter.hasNext()){
+            Producto prod = (Producto) iter.next();
+            
+            try{
+                if(prod.getFechaCaducidad().compareTo(hoy) > 0)
+                    throw new ProductoVencido("Producto Vencido DETECTADO");
+           }
+           catch(ProductoVencido p){
+               System.err.println("\nProducto Separado Correctamente\n");
+               vencidos.add(prod);
+           }
+       }
+       
+       return vencidos;
+   }
+}
+
+
+import TP1.EJ_2.Puerto.Fecha;
+/**
+ *
+ * @author jerem
+ */
+abstract class Producto {
+    private String denominacion;
+    private Fecha fechaCaducidad;
+    private int nroLote;
+    private Fecha fechaEnvaso;
+    private String paisOrigen;
+
+    public Producto(String denominacion, Fecha fechaCaducidad, int nroLote, Fecha fechaEnvaso, String paisOrigen) {
+        this.denominacion = denominacion;
+        this.fechaCaducidad = fechaCaducidad;
+        this.nroLote = nroLote;
+        this.fechaEnvaso = fechaEnvaso;
+        this.paisOrigen = paisOrigen;
+    }
+    
+    public void setDenominacion(String denominacion) {
+        this.denominacion = denominacion;
+    }
+
+    public void setFechaCaducidad(Fecha fechaCaducidad) {
+        this.fechaCaducidad = fechaCaducidad;
+    }
+
+    public void setNroLote(int nroLote) {
+        this.nroLote = nroLote;
+    }
+
+    public void setFechaEnvaso(Fecha fechaEnvaso) {
+        this.fechaEnvaso = fechaEnvaso;
+    }
+
+    public void setPaisOrigen(String paisOrigen) {
+        this.paisOrigen = paisOrigen;
+    }
+
+    public String getDenominacion() {
+        return denominacion;
+    }
+
+    public Fecha getFechaCaducidad() {
+        return fechaCaducidad;
+    }
+
+    public int getNroLote() {
+        return nroLote;
+    }
+
+    public Fecha getFechaEnvaso() {
+        return fechaEnvaso;
+    }
+
+    public String getPaisOrigen() {
+        return paisOrigen;
+    }
+}
+
+import TP1.EJ_2.Puerto.Fecha;
+
+/**
+ *
+ * @author jerem
+ */
+class ProductosFrescos extends Producto{
+
+    public ProductosFrescos(String denominacion, Fecha fechaCaducidad, int nroLote, Fecha fechaEnvaso, String paisOrigen) {
+        super(denominacion, fechaCaducidad, nroLote, fechaEnvaso, paisOrigen);
+    }
+    
+}
+
+import TP1.EJ_2.Puerto.Fecha;
+
+/**
+ *
+ * @author jerem
+ */
+public class ProductoCongelado extends Producto{
+    private int temperatura;
+
+    public ProductoCongelado(int temperatura, String denominacion, Fecha fechaCaducidad, int nroLote, Fecha fechaEnvaso, String paisOrigen) {
+        super(denominacion, fechaCaducidad, nroLote, fechaEnvaso, paisOrigen);
+        this.temperatura = temperatura;
+    }
+
+    public void setTemperatura(int temperatura) {
+        this.temperatura = temperatura;
+    }
+
+    public int getTemperatura() {
+        return temperatura;
+    }
+
+}
+
+import TP1.EJ_2.Puerto.Fecha;
+
+/**
+ *
+ * @author jerem
+ */
+public class ProductoRefrigerado extends Producto{
+    private int codigoOrg;
+    private int tempMantenimiento;
+
+    public ProductoRefrigerado(int codigoOrg, int tempMantenimiento, String denominacion, Fecha fechaCaducidad, int nroLote, Fecha fechaEnvaso, String paisOrigen) {
+        super(denominacion, fechaCaducidad, nroLote, fechaEnvaso, paisOrigen);
+        this.codigoOrg = codigoOrg;
+        this.tempMantenimiento = tempMantenimiento;
+    }
+
+    public int getCodigoOrg() {
+        return codigoOrg;
+    }
+
+    public int getTempMantenimiento() {
+        return tempMantenimiento;
+    }
+
+    public void setCodigoOrg(int codigoOrg) {
+        this.codigoOrg = codigoOrg;
+    }
+
+    public void setTempMantenimiento(int tempMantenimiento) {
+        this.tempMantenimiento = tempMantenimiento;
+    }
+
+}
