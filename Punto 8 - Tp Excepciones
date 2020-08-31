@@ -1,6 +1,7 @@
 package TP2.EJ_8.PruebExc;
 import java.util.Scanner;
 import java.util.*;
+import java.io.IOException;
 /**
  *
  * @author jerem
@@ -24,10 +25,14 @@ class PruebaExcep {
         */
         System.out.println("El programa esta verificando su edad..\n");
         
-        if(edad >= 18)
-            System.out.println("Puede continuar");
-        else
-            throw new RuntimeException("Es menor de edad");
+        try{
+            if(edad < 18)
+                throw new IOException();
+        }
+        catch(IOException e){
+            System.out.println("Es menor de edad");
+        }
+        
     }
     
     private static void apostarA(int num){
@@ -39,11 +44,19 @@ class PruebaExcep {
         numRuleta = (int)(Math.random() * (36 + 1));
         
         if(num < 0 && num > 36)
-            throw new RuntimeException("Ha elegido un numero incorrecto");
+            try{
+                throw new IOException();
+            }catch (IOException e){
+                System.err.println("Numero incorrecto");
+            }
         else{
-            if(num != numRuleta)
-                throw new RuntimeException("Su numero no ha salido");
-            else
+            if(num != numRuleta){
+                try{
+                    throw new IOException();
+                }catch (IOException e){
+                    System.err.println("Su numero no ha sdo escogido");
+                }
+            }else
                 System.out.println("BIEN JUGADO");
         }
     }
@@ -66,7 +79,13 @@ class PruebaExcep {
             if(iter.hasNext())
                 System.out.println((int) iter.next());
             else
-                throw new RuntimeException("PARA MASTER, NO HAY TANTOS NUMEROS EN LA COLECCION");
+                try{
+                    throw new IOException();
+                }
+                catch(IOException e){
+                    j = 7;
+                    System.err.println("Limite del arreglo");
+                }
         }
     }
 }
