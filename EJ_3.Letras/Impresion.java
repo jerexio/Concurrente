@@ -18,8 +18,7 @@ public class Impresion extends Thread {
     }
 
     public void run() {
-        System.out.println("\nLa letra " + letra.getLetra() + " esta lista");
-        
+                
         synchronized (letra) {
             int cant = (int) letra.getLetra();
 
