@@ -20,8 +20,9 @@ public class Impresion extends Thread {
     }
 
     public void run() {
-        
-        while(this.turno.esMiTurno(this.letra.getTurno())){}
+        while(this.turno.getTurnoActual() != this.letra.getTurno()){
+            //SALA DE ESPERA
+        }
         
         synchronized (turno) {
             int cant = (int) letra.getLetra();
