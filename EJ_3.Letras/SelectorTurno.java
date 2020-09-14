@@ -16,8 +16,13 @@ public class SelectorTurno {
         this.turnoActual = 1;
     }
     
-    public boolean esMiTurno(int valor){
-        return (this.turnoActual == valor);
+    public synchronized void reset(){
+        if(this.turnoActual > 3)
+            this.turnoActual = 1;
+    }
+    
+    public synchronized int getTurnoActual(){
+        return this.turnoActual;
     }
     
     public synchronized void actualizar(){
