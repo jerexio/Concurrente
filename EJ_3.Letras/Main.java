@@ -17,7 +17,7 @@ public class Main {
         SelectorTurno turno = new SelectorTurno();
         
         for (int i = 0; i <= 2; ++i) {
-            imp[i] = new Impresion(new Letra((char) (i + 65), i + 1), turno);
+            imp[i] = new Impresion(new Letra((char) (i + 65), i+1), turno);
         }
 
         imp[0].start();
