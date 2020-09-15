@@ -12,10 +12,10 @@ package TP3.EJ_4.AutosViajando;
 public class Main {
     public static void main(String[] args){
         Thread[] hilosAutos = new Thread[5];
-        Surtidor surt = new Surtidor();
+        Surtidor surt = new Surtidor(5);
                 
         for(int i = 0; i < 5; i++){
-            hilosAutos[i] = new Thread(new Auto(surt, "ABC-00"+i, "V-0."+i, "ReDuroMono", 120), "Auto-"+i);
+            hilosAutos[i] = new Thread(new Auto(surt, "Auto-"+i, "V-0."+i, "ReDuroMono", 120), "Auto-"+i);
         }
         
         hilosAutos[0].start();
