@@ -30,7 +30,7 @@ public class Personaje implements Runnable {
     public void run() {
         System.out.println(Thread.currentThread().getName() + " Hace " + this.cantHabilidad + " Puntos.");
         synchronized (vida) {
-            this.vida.actualizarVida(this.vida.obtenerVida() - this.cantHabilidad);
+            this.vida.actualizarVida(this.vida.obtenerVida() + this.cantHabilidad);
 
             System.out.println("Esta es tu vida restante: " + this.vida.obtenerVida());
             //vida.modificarVida(cantHabilidad);
