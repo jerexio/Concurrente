@@ -9,21 +9,51 @@ package TP3.EJ_4.AutosViajando;
  * @author jerem
  */
 public class Surtidor {
-    private Cola filaSurtidor;
-
-    public Surtidor() {
-        this.filaSurtidor = new Cola();
+/*
+ * Se implemento con un arreglo para evitar
+ * que los conductores se robaran los lugares entre si
+*/
+    private Auto[] fila;
+    private int posInicial;
+    private int posFinal;
+    
+    public Surtidor(int cantPos) {
+        this.fila = new Auto[cantPos];
+        this.posFinal = 0;
+        this.posInicial = 0;
     }
     
     public synchronized void ponerseEnFila(Auto auto){
-        this.filaSurtidor.poner(auto);
+        System.out.println(Thread.currentThread().getName() +
+                " Llega y se detiene en la estacion");
+        
+        this.fila[posFinal] = auto;
+        this.actualizarFinal();
     }
     
     public synchronized void cargarYSalir(){
-        this.filaSurtidor.sacar();
+        this.fila[this.posInicial] = null;
+        this.actualizarInicio();
     }
     
-    public synchronized Auto getFrenteFila(){
-        return ((Auto)this.filaSurtidor.obtenerFrente());
+    private void actualizarFinal(){
+        
+        if(this.posFinal + 1 >= 5)
+            this.posFinal = 0;
+        else
+            this.posFinal++;
+    }
+    
+    private void actualizarInicio(){
+        
+        if(this.posInicial + 1 >= 5)
+            this.posInicial = 0;
+        else
+            this.posInicial++;
+    }
+    
+    public synchronized Auto verFrente(){
+        return this.fila[this.posInicial];
     }
 }
+
