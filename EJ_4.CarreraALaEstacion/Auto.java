@@ -21,29 +21,27 @@ public class Auto extends Vehiculo implements Runnable {
     public void run() {
         System.out.println(Thread.currentThread().getName()
                 + " Recorre XX Km, llega a reserva y se dirige a una estacion de servicio.");
+        
         this.surtCercano.ponerseEnFila(this);
         
-        while (this.surtCercano.getFrenteFila().equals(this)) {}
-
         synchronized (surtCercano) {
-            System.out.println(this.surtCercano.getFrenteFila().getPatente()
+            
+            System.out.println(this.surtCercano.verFrente().getPatente()
                     + " Esta cargando actualmente.");
+            
+            this.surtCercano.cargarYSalir();
+            
             try {
-                Thread.sleep(5000);
-            } catch (InterruptedException ignore) {
+                Thread.sleep(3500);//Simula carga de combustible
+                
+            } catch (InterruptedException e) {
                 System.err.println("Parece que exploto la estacion de servicio");
+                
             }
             finally{
                 System.out.println("Se finalizo de cargar");
-                this.surtCercano.cargarYSalir();
             }
 
         }
-    }
-    
-    public synchronized boolean equals(Object o){
-        Auto auto2 = (Auto) o;
-        
-        return (this.getPatente().equals(auto2.getPatente()));
     }
 }
