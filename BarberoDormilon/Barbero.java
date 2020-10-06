@@ -27,14 +27,16 @@ public class Barbero extends Thread {
          * La barberia en un horario se cierra, en ese horario dejan de entrar clientes
          * por eso el barbero cierra cuando ya no quedan clientes
          */
+        boolean estaAbierto = true;
         
-        while(barberia.quedanClientes()){
+        while(estaAbierto){
             
             barberia.atender();
             trabajar();
             barberia.cobrar();
             barberia.descansar();
-
+            
+            estaAbierto = barberia.quedanClientes();
         }
         
         barberia.cerrarBarberia();
