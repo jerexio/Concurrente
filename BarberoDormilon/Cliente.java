@@ -45,7 +45,7 @@ public class Cliente extends Thread {
         }
     }
     
-    public String getNombre(){
-        return nombre.substring(13);
-    }
+    //public String getNombre(){
+    //    return nombre.substring(13);
+    //}
 }
