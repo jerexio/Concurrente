@@ -35,7 +35,6 @@ public class Barberia {
     private Semaphore semSillon = new Semaphore(1, true);
     private Semaphore semCliente = new Semaphore(0, true);
     private Semaphore mutexSillas = new Semaphore(1, true);
-    private Semaphore mutexAbierto = new Semaphore(0);
     private int cantSillas;
     //private boolean abierto;
     private long horarioAbierto = System.currentTimeMillis(),
@@ -179,7 +178,6 @@ public class Barberia {
     public void atender() {
 
         try {
-            mutexAbierto.release();
             semBarbero.acquire();
 
         } catch (InterruptedException ignore) {
@@ -190,11 +188,6 @@ public class Barberia {
     }
 
     public void cobrar() {
-        try {
-            mutexAbierto.acquire();
-        } catch (InterruptedException ignore) {
-            System.err.println("El barbero se asuste al creer que el cliente se va sin pagar");
-        }
         semCliente.release();
     }
 
@@ -225,6 +218,6 @@ public class Barberia {
     }
     
     public boolean quedanClientes(){
-        return (Thread.activeCount() >= 1);
+        return (cantSillas < 5);
     }
 }
