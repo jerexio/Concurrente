@@ -6,6 +6,7 @@
 package TP4.EJ_14_BarsitoEnPolleria_V2;
 
 
+
 /**
  *
  * @author jerem
@@ -23,17 +24,24 @@ public class Empleado implements Runnable {
     public void run() {
         
         while(!tuvoDescanso){
-            int random = (int) (Math.random() * 2);
             
-            if (confiteria[random].puedoIngresar()) {
+            int mesa = (int)(Math.random() * 2);
+            
+            if (confiteria[mesa].puedoIngresar()) {
                 
-                int numBeb = elegirDelMenu(confiteria[random].mirarBebidas(), 0);
-                procederAOrdenarBebida(random, numBeb);
+                if(confiteria[mesa].deseaBebida()){
+                    confiteria[mesa].ordenarBebida(Thread.currentThread().getName());
+                    confiteria[mesa].recibirBebida(Thread.currentThread().getName());
+                }
                 
-                int numCom = elegirDelMenu(confiteria[random].mirarComidas(), numBeb);
-                procederAOrdenarComida(random, numCom);
+                if(confiteria[mesa].deseaComida()){
+                    confiteria[mesa].ordenarComida(Thread.currentThread().getName());
+                    confiteria[mesa].recibirComida(Thread.currentThread().getName());
+                }
                 
-                confiteria[random].salir(Thread.currentThread().getName());
+                comerYBeber();
+                confiteria[mesa].salir(Thread.currentThread().getName());
+                
                 tuvoDescanso = true;
             } else {
                 trabajar();
@@ -41,31 +49,10 @@ public class Empleado implements Runnable {
         }
     }
     
-    private void procederAOrdenarBebida(int mesa, int numOrden){
-        confiteria[mesa].ordenarBebida(Thread.currentThread().getName(), numOrden);
-        confiteria[mesa].recibirBebida(Thread.currentThread().getName());
-        beber();
-    }
-    
-    private void procederAOrdenarComida(int mesa, int numOrden){
-        confiteria[mesa].ordenarComida(Thread.currentThread().getName(), numOrden);
-        confiteria[mesa].recibirComida(Thread.currentThread().getName());
-        comer();
-    }
-    
-    private void comer() {
+    private void comerYBeber() {
         try {
             Thread.sleep(4500);
-            System.out.println(Thread.currentThread().getName() + ": \"Ahh, mi ricorda la mia bella Italia\"");
-        } catch (InterruptedException e) {
-            System.err.println("Se ahogo con la comida");
-        }
-    }
-    
-    private void beber() {
-        try {
-            Thread.sleep(4500);
-            System.out.println(Thread.currentThread().getName() + ": \"Muy buena bebida\"");
+            System.out.println(Thread.currentThread().getName() + ": \"Muy buena la cuetion\"");
         } catch (InterruptedException e) {
             System.err.println("Se ahogo con la comida");
         }
@@ -78,17 +65,5 @@ public class Empleado implements Runnable {
             System.err.println("El empleado " + Thread.currentThread().getName()
                     + " ha sufrido un accidente");
         }
-    }
-    
-    private int elegirDelMenu(String[] alim, int numPrev){
-        int num = (int)(Math.random() * alim.length + 1); //
-        
-        if(num >= alim.length){
-            if(numPrev != -1)
-                num = -1;
-            else
-                num = (int)(Math.random() * alim.length);
-        }     
-        return num;
     }
 }

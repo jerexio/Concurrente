@@ -5,6 +5,10 @@
  */
 package TP4.EJ_14_BarsitoEnPolleria_V2;
 
+import TP4.EJ_13_BarsitoEnPolleria.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  *
@@ -19,22 +23,28 @@ public class Mozo implements Runnable {
     }
     
     public void run(){
-        int mesa = (int) (Math.random() * 2);
+        
+        int mesa = (int)(Math.random() * 2),
+            mesasControladas = 0;
         
         while(true){
             
-            if(confiteria[mesa].tomarOrdenbebida()){
+            if(!confiteria[mesa].hayCliente()){
+                confiteria[mesa].tomarOrden();
                 prepararBebida();
                 confiteria[mesa].entregarBebida();
+                mesasControladas = 0;
+            }
+            else{
+                mesasControladas++;
             }
             
-            if(confiteria[mesa].tomarOrdenComida()){
-                confiteria[mesa].recibirComidaMozo();
-                confiteria[mesa].entregarComida();
-            }
+            mesa = actualizar(mesa);
             
-            //confiteria[mesa].inventarBebidas();
-            mesa = actualizarMesa(mesa);
+            if(mesasControladas == 2){
+                confiteria[mesa].inventarBebidas();
+                mesasControladas = 0;
+            }
         }
     }
     
@@ -48,7 +58,8 @@ public class Mozo implements Runnable {
         }
     }
     
-    private int actualizarMesa(int num){
+    private int actualizar(int num){
+        
         if(num == 1)
             num = 0;
         else

@@ -8,223 +8,168 @@ package TP4.EJ_14_BarsitoEnPolleria_V2;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 /**
  *
  * @author jerem
  */
 public class Confiteria {
-
+    
     /**
      * Soy una confiteria, aca se organiza como van a ser las comunicaciones
      * entre los hilos Empleados, Mozo y cocinero.
      */
+    
     private Semaphore semEmpleado = new Semaphore(0, true);
     private Semaphore semMozo = new Semaphore(0, true);
     private Semaphore semCocinero = new Semaphore(0, true);
     private Semaphore semBar = new Semaphore(1, true);
-    private String[] bebidas = {"Gaseosa", "Jugo", "Agua", "Vino", "Cervezas"};
-    private String[] comidas = {"Pollo al horno", "Pollo al disco", "Asado", "Hamburguejas al Vapor", "Banquete"};
-    private int numBebida = -1, numComida = -1;
-
-    
-    
-    
-    
-    
-    
+    private Semaphore mutexVerifCliente = new Semaphore(1, true);
+    private int numBebida = -1;
+    private int numComida = -1;
     
     /**
      * Cosas que hace el Empleado.
      */
-    public boolean puedoIngresar() {
+    public boolean puedoIngresar(){
         return (semBar.tryAcquire());
     }
-
-    public void ordenarBebida(String nombre, int num) {
+    
+    public boolean deseaBebida(){
+        
+        numBebida = (int)(Math.random() * 2 + 1);
+        
+        boolean desea = (numBebida != (2+1));
+        
+        if(!desea)
+            numBebida = -1;
+        
+        return desea;
+    }
+    
+    public void ordenarBebida(String nombre){
+        
         try {
-            if(num != -1){
-                numBebida = num;
-                System.out.println(nombre + ": \"Me gustaria probar " + bebidas[num] + "\"");
-            }
+            
+            System.out.println(nombre+ ": \"Me gustaria probar su mejor bebida\"");
             semMozo.release();
             semEmpleado.acquire();
-        } catch (InterruptedException e) {
+            
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Confiteria.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public void ordenarComida(String nombre, int num) {
-        try {
-            if(num != -1){
-                numComida = num;
-                System.out.println(nombre + ": \"Me gustaria probar " + comidas[num] + "\"");
-            }
-            semMozo.release();
+    
+    public void recibirBebida(String nombre){
+        System.out.println(nombre +": \"Gracias por la bebida\"");
+        semMozo.release();
+    }
+    
+    public boolean deseaComida(){
+        
+        numComida = (int)(Math.random() * 2 + 1);
+        
+        boolean desea = (numComida != (2+1));
+        
+        return desea;
+    }
+    
+    public void ordenarComida(String nombre){
+        try{
+            System.out.println(nombre + ": \"Me gustaria probar la especialidad de la casa\"");
+            semCocinero.release();
             semEmpleado.acquire();
-        } catch (InterruptedException e) {
+        }
+        catch(InterruptedException e){
         }
     }
-
-    public void recibirBebida(String nombre) {
-        System.out.println(nombre + ": \"Gracias por la bebida\"");
-        semMozo.release();
+    
+    public void recibirComida(String nombre){
+        System.out.println(nombre +": \"Gracias por la comida\"");
+        semCocinero.release();
     }
-
-    public void recibirComida(String nombre) {
-        System.out.println(nombre + ": \"Gracias por la comida\"");
-        semMozo.release();
-    }
-
-    public void salir(String nombre) {
-        System.out.println(nombre + " termino de comer y se esta yendo");
+    
+    public void salir(String nombre){
+        System.out.println(nombre+ " termino de comer y se esta yendo");
         semBar.release();
     }
-
-    public String[] mirarBebidas() {
-        return bebidas;
-    }
-
-    public String[] mirarComidas() {
-        return comidas;
-    }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     /**
      * Cosas que hace el Mozo.
      */
-    public boolean tomarOrdenbebida() {
-        
-        boolean tomar = false;
+    public boolean hayCliente(){
         try {
-            semMozo.acquire();
+            mutexVerifCliente.acquire();
             
-            if (numBebida != -1) {
-                System.out.println("Mozo: \"Aguarde un momento\"");
-                tomar = true;
-            }
-            else{
-                semMozo.release();
-                semEmpleado.release();
-            }
-        }
-        catch (InterruptedException e) {
-        }
-        
-        return tomar;
-    }
-
-    public void entregarBebida() {
-        System.out.println("Mozo: \"Aqui esta su bebida\"");
-        semMozo.release();
-        semEmpleado.release();
-    }
-
-    public boolean tomarOrdenComida() {
-        
-        boolean tomar = false;
-        try {
-            semMozo.acquire();
-            
-            if (numComida != -1) {
-                System.out.println("Mozo: \"Aguarde un momento\"");
-                System.out.println("Mozo: \"Hay una nueva orden chef\"");
-                tomar = true;
-                semCocinero.release();
-            }
-            else{
-                semMozo.release();
-                semEmpleado.release();
-            }
-        }
-        catch (InterruptedException e) {
-        }
-        
-        return tomar;
-    }
-
-    public void recibirComidaMozo() {
-        try {
-            semMozo.release();
-            semCocinero.acquire();
-            System.out.println("Mozo: \"Esto se ve muy bueno\"");
-            semCocinero.release();
-
         } catch (InterruptedException ex) {
             Logger.getLogger(Confiteria.class.getName()).log(Level.SEVERE, null, ex);
         }
+        //Si no hay cliente voy a poder tomar el semaforo
+        boolean hayCliente = semBar.tryAcquire();
+            
+        if(hayCliente){
+            semBar.release();
+        }
+        mutexVerifCliente.release();
+            
+            
+       return hayCliente;
     }
-
-    public void entregarComida() {
-        System.out.println("Mozo: \"Su comida y bebida señor\"");
+    
+    public void tomarOrden(){
+        try{
+            semMozo.acquire();
+            System.out.println("Mozo: \"Aguarde un momento\"");
+        }
+        catch(InterruptedException e){
+        }
+    }
+    
+    public void entregarBebida(){
+        System.out.println("Mozo: \"Su bebida esta lista\"");
         semEmpleado.release();
-
     }
-
-    public void inventarBebidas() {
+    
+    public void inventarBebidas(){
         try {
-
+            
             semMozo.acquire();
             System.out.println("Mozo: \"Mmm...Si mezclo mirra, ruibarbo, manzanilla, cardamomo, orégano y azafrán\"");
             System.out.println("Mozo: \"Pues te voy a llamar fernet\"");
-
+            
+            Thread.sleep(2500);
         } catch (InterruptedException ex) {
             Logger.getLogger(Confiteria.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+         
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     /**
      * Cosas que hace cocinero.
      */
-    public void recibirOrden() {
-        try {
+    public void recibirOrden(){
+        try{
             semCocinero.acquire();
             System.out.println("Cocinero: \"Okey, ya lo cocino\"");
-        } catch (InterruptedException e) {
+        }
+        catch(InterruptedException e){
         }
     }
-
-    public void terminarComida() {
-        try {
-
-            semMozo.acquire();
-            System.out.println("Cocinar: \"Ya termine de cocinar\"");
-            semCocinero.release();
-
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Confiteria.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    
+    public void terminarComida(){
+        
+        System.out.println("Cocinar: \"Ya termine de cocinar\"");
+        semEmpleado.release();
     }
-
-    public void inventarComidas() {
-        try {
+    
+    public void inventarComidas(){
+        try{
             semCocinero.acquire();
-            System.out.println("Cocinero: \"A inventar Pollos\"");
-        } catch (InterruptedException e) {
+            System.out.println("Cocinero: \"A ordenar\"");
+            Thread.sleep(2500);
+        }
+        catch(InterruptedException e){
         }
     }
 }

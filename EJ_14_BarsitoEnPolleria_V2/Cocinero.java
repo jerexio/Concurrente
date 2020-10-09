@@ -18,11 +18,21 @@ public class Cocinero implements Runnable {
     }
     
     public void run(){
+        boolean estaOrdenado = true;
         
         while(true){
-            confiteria.recibirOrden();
-            confiteria.terminarComida();
-            confiteria.inventarComidas();
+            
+            if(confiteria.hayCliente()){
+                confiteria.recibirOrden();
+                cocinar();
+                confiteria.terminarComida();
+                estaOrdenado = false;
+            }
+            
+            if(!estaOrdenado){
+                confiteria.inventarComidas();
+                estaOrdenado = true;
+            }
         }
     }
     
