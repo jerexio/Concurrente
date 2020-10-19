@@ -16,9 +16,11 @@ public class Barbero extends Thread {
      */
     
     private Barberia barberia;
+    private String nombre;
     
-    public Barbero(Barberia barberia){
+    public Barbero(Barberia barberia, String nombre){
         this.barberia = barberia;
+        this.nombre = nombre;
     }
     
     public void run(){
@@ -31,15 +33,15 @@ public class Barbero extends Thread {
         
         while(estaAbierto){
             
-            barberia.atender();
+            barberia.atender(nombre);
             trabajar();
             barberia.cobrar();
-            barberia.descansar();
+            barberia.descansar(nombre);
             
             estaAbierto = barberia.quedanClientes();
         }
         
-        barberia.cerrarBarberia();
+        barberia.cerrarBarberia(nombre);
     }
     
     private void trabajar(){
