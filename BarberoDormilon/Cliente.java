@@ -25,7 +25,7 @@ public class Cliente extends Thread {
     
     public void run(){
         
-        if(barberia.estaAbierto() && barberia.ingresar(nombre)){
+        if(!barberia.estaAbierto() && barberia.ingresar(nombre)){
             barberia.pedirCorte(nombre);
             barberia.pagarYSalir(nombre);
         }
@@ -45,7 +45,7 @@ public class Cliente extends Thread {
         }
     }
     
-    //public String getNombre(){
-    //    return nombre.substring(13);
-    //}
+    public String getNombre(){
+        return nombre.substring(13);
+    }
 }
