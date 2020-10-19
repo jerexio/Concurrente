@@ -6,8 +6,6 @@
 package Test_De_La_Clase.Barbero;
 
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -32,13 +30,14 @@ public class Barberia {
      * .
      */
     private Semaphore semBarbero = new Semaphore(0, true);
-    private Semaphore semSillon = new Semaphore(1, true);
+    private Semaphore semSillon = new Semaphore(3, true);
     private Semaphore semCliente = new Semaphore(0, true);
     private Semaphore mutexSillas = new Semaphore(1, true);
+    private Semaphore mutexAbierto = new Semaphore(0);
     private int cantSillas;
     //private boolean abierto;
-    private long horarioAbierto = System.currentTimeMillis(),
-                 tiempoTranscurrido = System.currentTimeMillis(),
+    private long horaInicial = System.currentTimeMillis(),
+                 tiempoTranscurrido,
                  horaDeSalida = 20000;
     
     public Barberia(int espacios) {
@@ -63,7 +62,7 @@ public class Barberia {
         
         System.out.println(nombre + " esta viendo si puede ingresar");
         
-//        if (semSillon.tryAcquire()) {  Esto es para implementar que el primer cliente ocupe sillon, ignorar
+//        if (semSillon.tryAcquire()) {
 //            ingreso = true;
 //        }
 //        else{
@@ -135,7 +134,7 @@ public class Barberia {
          * Si obtuve el sillon libero silla.
          */
         try {
-           mutexSillas.acquire();
+            mutexSillas.acquire();
 
             cantSillas++;
             mutexSillas.release();
@@ -160,6 +159,8 @@ public class Barberia {
     }
     
     public boolean estaAbierto(){
+        tiempoTranscurrido = horaInicial - System.currentTimeMillis();
+        
         return (tiempoTranscurrido >= horaDeSalida);
     }
 
@@ -175,28 +176,34 @@ public class Barberia {
     /**
      * COSAS QUE HACE EL BARBERO.
      */
-    public void atender() {
+    public void atender(String nombre) {
 
         try {
+            mutexAbierto.release();
             semBarbero.acquire();
 
         } catch (InterruptedException ignore) {
             System.err.println("El barbero se rasbalo y cayo");
         }
 
-        System.out.println("Barbero: \"Si, señor, un placer\"");
+        System.out.println(nombre+": \"Si, señor, un placer\"");
     }
 
     public void cobrar() {
+        try {
+            mutexAbierto.acquire();
+        } catch (InterruptedException ignore) {
+            System.err.println("El barbero se asuste al creer que el cliente se va sin pagar");
+        }
         semCliente.release();
     }
 
-    public void descansar() {
+    public void descansar(String nombre) {
         try {
 
             semBarbero.acquire();
 
-            System.out.println("A dormir pues");
+            System.out.println(nombre+": \"A dormir pues\"");
             Thread.sleep(2000);
 
         } catch (InterruptedException ignore) {
@@ -204,16 +211,16 @@ public class Barberia {
         }
     }
 
-    public void cerrarBarberia() {
+    public void cerrarBarberia(String nombre) {
         
         /**
          * Por que estaran Deprecated los metodos para matar hilos??
          * Porque es responsabilidad del programdor lograr ese "matar".
          */
         
-        System.out.println("Barbero: \"Ya es hora de cerrar\"");
+        System.out.println(nombre+": \"Ya No atiendo mas\"");
 
-        System.out.println("Fueron atendidas " + (10 - Thread.activeCount()) + " personas");
+        System.out.println("Fueron atendidas " + (10 - Thread.activeCount() - 1) + " personas");
 
     }
     
