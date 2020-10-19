@@ -14,13 +14,16 @@ public class BarberoDormilon {
     public static void main(String[] args){
         
         Barberia barberia = new Barberia(5);
-        Barbero barbero = new Barbero(barberia);
+        Barbero[] barberos = new Barbero[3];
         
         Cliente[] clientes = new Cliente[10];
         
         inicioClientes(clientes, barberia);
         
-        barbero.start();
+        for(int i = 0; i < 3; i++){
+            barberos[i] = new Barbero(barberia, "BARBERO__"+i+""+i+""+i+""+i+"___");
+            barberos[i].start();
+        }
         
         for(int i = 0; i < 10; i++){
             clientes[i].start();
