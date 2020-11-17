@@ -15,16 +15,23 @@ public class AutoNorte extends Auto implements Runnable {
     
     private AutoNorteVisual autoV;
     
-    public AutoNorte(int posIni, int limite, JLabel label, Puente puente) {
-        super(puente);
+    public AutoNorte(int posIni, int limite, JLabel label, Puente puente, Turno turno) {
+        super(puente, turno);
         autoV = new AutoNorteVisual(posIni, limite, label);
     }
     
     @Override
     public void cruzar() throws InterruptedException {
         autoV.llegar();
+        
         puente.entrarCocheDelNorte();
-        autoV.manejar();
+        int nro = turno.tomarTurno();
+        turno.esperarTurno(nro);
+        
+        autoV.manejarPrimera();
+        turno.下一班();
+        autoV.manejarSegunda();
         puente.salirCocheDelNorte();
     }
+    
 }

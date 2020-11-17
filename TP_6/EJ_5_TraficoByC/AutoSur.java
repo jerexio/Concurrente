@@ -15,15 +15,22 @@ public class AutoSur extends Auto implements Runnable {
     
     private AutoSurVisual autoV;
     
-    public AutoSur(int posIni, int limite, JLabel label, Puente puente) {
-        super(puente);
+    public AutoSur(int posIni, int limite, JLabel label, Puente puente, Turno turno){
+        super(puente, turno);
         autoV = new AutoSurVisual(posIni, limite, label);
     }
+    
     @Override
     public void cruzar() throws InterruptedException {
         autoV.llegar();
+        
         puente.entrarCocheDelSur();
-        autoV.manejar();
+        int nro = turno.tomarTurno();
+        turno.esperarTurno(nro);
+        
+        autoV.manejarPrimera();
+        turno.下一班();
+        autoV.manejarSegunda();
         puente.salirCocheDelSur();
     }
 }

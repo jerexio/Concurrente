@@ -10,10 +10,26 @@ package TP6.EJ_5.Trafico_ByC;
  * @author jerem
  */
 public class Puente {
-
+    
+    /**
+     * Casos cubiertos:
+     *      - Hay autos de ambos lados
+     *      - Paso la maxima cantidad de autos posibles:
+     *              - Hay autos en este lado y no del otro
+     *              - No quedan autos de este lado y si del otro lado
+     *      - No paso la cantidad de autos posibles:
+     *              - No quedan autos de este lado y del otro si
+     *              - Queda un auto que llego tarde de este lado
+     *      - No hay autos
+     *
+     *      - Que pasa si solo hay autos de un solo lado, al principio de la ejecucion??
+     *              *Si eso pasa ya no habria concurrencia, asi que no entra en consideracion.
+     */
+    
+    private final Object monitorNorte = new Object(); //MONITORNORTE
     private final Object monitorSur = new Object(); //MONITORSUR
-    private int cantNorte = 10;
-    private int cantSur = 10;
+    private int cantNorte = 10; //Esto es para saber quien es el ultimo que pasa del norte
+    private int cantSur = 10;   //Esto es para saber quien es el ultimo que pasa del sur
     private int pasaronNor = 10;
     private int pasaronSur = 10;
     private int esperaNor = 0;
@@ -29,51 +45,37 @@ public class Puente {
         }
     }
 
-    public synchronized void entrarCocheDelNorte() throws InterruptedException {
+    public void entrarCocheDelNorte() throws InterruptedException {
+        synchronized (monitorNorte) {
 
-        while (pasaronNor == 10) {
             esperaNor++;
-            wait();
-        }
 
-        if (esperaNor > 0) {
+            while (pasaronNor == 10) {
+                monitorNorte.wait();
+            }
+
             esperaNor--;
+
+            pasaronNor++;
+            cantNorte--;
+            System.out.println("SALIENDO SUR");
         }
-        
-        pasaronNor++;
-        cantNorte--;
     }
 
-    public synchronized void salirCocheDelNorte() throws InterruptedException {
-        cantNorte++;
-
-        /**
-         * Casos cubiertos:
-         *      - Hay autos de ambos lados
-         *      - Paso la maxima cantidad de autos posibles:
-         *              - Hay autos en este lado y no del otro
-         *              - No quedan autos de este lado y si del otro lado
-         *      - No paso la cantidad de autos posibles:
-         *              - No quedan autos de este lado y del otro si
-        *               - Queda un auto que llego tarde de este lado
-         *      - No hay autos
-         *
-         *      - Que pasa si solo hay autos de un solo lado, al principio de la ejecucion??
-         *              *Si eso pasa ya no habria concurrencia, asi que no entra en consideracion.
-         */
+    public void salirCocheDelNorte() throws InterruptedException {
         
-        if (cantNorte == 10) { //Soy el ultimo de los que puede pasar
-            pasaronNor = 10; //Soy el ultimo de los que llego a pasar el puente
-            if (esperaSur != 0) { //Todavia hay autos en el sur
-                synchronized (monitorSur) {
-                    pasaronSur = 0;
-                    monitorSur.notifyAll();
+        synchronized(monitorNorte){
+            cantNorte++;
+        
+            if (cantNorte == 10) { //Soy el ultimo de los que puede pasar
+                pasaronNor = 10;
+                if (esperaSur != 0) { //Todavia hay autos en el sur
+                    System.out.println("PASEN");
+                    darPasoSur(0);
+                } else { //No quedan autos en el sur
+                    darPasoNorte(1);
+                    
                 }
-            } else { //No quedan autos en el sur
-                if (esperaNor != 0) { //Quedan autos en el norte
-                    this.notifyAll();
-                }
-
             }
         }
     }
@@ -81,17 +83,17 @@ public class Puente {
     public void entrarCocheDelSur() throws InterruptedException {
         synchronized (monitorSur) {
 
+            esperaSur++;
+
             while (pasaronSur == 10) {
-                esperaSur++;
                 monitorSur.wait();
             }
 
-            if (esperaSur > 0) {
-                esperaSur--;
-            }
-            
+            esperaSur--;
+
             pasaronSur++;
             cantSur--;
+            System.out.println("SALIENDO SUR");
         }
     }
 
@@ -100,19 +102,27 @@ public class Puente {
             cantSur++;
 
             if (cantSur == 10) { //Soy el ultimo de los que puede pasar
-                pasaronSur = 10; //Soy el ultimo de los que llego a pasar el puente
+                pasaronSur = 10;
                 if (esperaNor != 0) { //Todavia hay autos en el norte
-                    synchronized (this) {
-                        pasaronNor = 0;
-                        this.notifyAll();
-                    }
+                    darPasoNorte(0);
                 } else { //No quedan autos en el norte
-                    if (esperaSur != 0) { //Quedan autos en el sur
-                        monitorSur.notifyAll();
-                    }
+                    darPasoSur(1);
                 }
             }
         }
     }
 
+    private void darPasoSur(int n) {
+        synchronized (monitorSur) {
+            pasaronSur = n;
+            monitorSur.notifyAll();
+        }
+    }
+
+    private void darPasoNorte(int n) {
+        synchronized (monitorNorte) {
+            pasaronNor = n;
+            monitorNorte.notifyAll();
+        }
+    }
 }

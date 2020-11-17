@@ -46,6 +46,11 @@ public class Carretera extends JFrame {
         getContentPane().add(fondo);
         fondo.setIcon(new ImageIcon("C:\\Users\\jerem\\Documents\\NetBeansProjects\\Prog.Concurrente2020\\src\\test\\java\\TP6\\EJ_5\\Trafico\\Fondo.png"));
         fondo.setBounds(0, 0, 1000, 400);
+        
+        JLabel borde = new JLabel();
+        fondo.add(borde);
+        borde.setIcon(new ImageIcon("C:\\Users\\jerem\\Documents\\NetBeansProjects\\Prog.Concurrente2020\\src\\test\\java\\TP6\\EJ_5\\Trafico\\borde.png"));
+        borde.setBounds(100, 100, 700, 100);
     }
     
     private void crearBotonInicio(int cantNorte, int cantSur){
@@ -58,8 +63,8 @@ public class Carretera extends JFrame {
         //botonInicio.setOpaque(false);
         //botonInicio.setContentAreaFilled(false);
         fondo.add(botonInicio);
-        //botonInicio.setVisible(true);
-        botonInicio.setBounds(0, 0, 50, 50);
+        botonInicio.setVisible(true);
+        botonInicio.setBounds(0, 0, 100, 50);
         botonInicio.addActionListener(new ActionListener(){
         
             @Override
@@ -71,15 +76,16 @@ public class Carretera extends JFrame {
                 AutoNorte[] aNorte = new AutoNorte[cantNorte];
                 int totalHilos = cantNorte + cantSur;
                 Thread[] hilos = new Thread[totalHilos];
-        
+                Turno turnoN = new Turno(),
+                      turnoS = new Turno();
         
                 for(int i = 0; i < cantSur; i++){
-                    aSur[i] = new AutoSur(ANCHO - 160, -100, fondo, puente);
+                    aSur[i] = new AutoSur(ANCHO - 160, -100, fondo, puente, turnoS);
                     hilos[i] = new Thread(aSur[i]);
                 }
                 
                 for(int i = 0; i < cantNorte; i++){
-                    aNorte[i] = new AutoNorte(50, ANCHO + 200, fondo, puente);
+                    aNorte[i] = new AutoNorte(50, ANCHO + 200, fondo, puente, turnoN);
                     hilos[(totalHilos-1)-i] = new Thread(aNorte[i]);
                 }
 

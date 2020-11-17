@@ -6,7 +6,6 @@
 package TP6.EJ_5.Trafico_ByC;
 
 import javax.swing.JOptionPane;
-
 /**
  *
  * @author jerem
@@ -14,9 +13,11 @@ import javax.swing.JOptionPane;
 public abstract class Auto {
     
     protected Puente puente;
+    protected Turno turno;
     
-    public Auto(Puente puente){
+    public Auto(Puente puente, Turno turno){
         this.puente = puente;
+        this.turno = turno;
     }
     
     public void run(){

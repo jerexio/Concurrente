@@ -16,7 +16,7 @@ public class AutoSurVisual {
     private int posIni;
     private int limite;
     private JLabel auto;
-    private int velocidad = (int)(Math.random() * 10) + 1;
+    private int velocidad = 4;
     
     public AutoSurVisual(int posIni, int limite, JLabel fondo) {
         this.posIni = posIni;
@@ -24,10 +24,10 @@ public class AutoSurVisual {
         
         ImageIcon imgSur;
         
-        if(velocidad < 6)
+        //(velocidad < 6)
             imgSur = new ImageIcon("C:\\Users\\jerem\\Documents\\NetBeansProjects\\Prog.Concurrente2020\\src\\test\\java\\TP6\\EJ_5\\Trafico\\Sur.png");
-        else
-            imgSur = new ImageIcon("C:\\Users\\jerem\\Documents\\NetBeansProjects\\Prog.Concurrente2020\\src\\test\\java\\TP6\\EJ_5\\Trafico\\Franchesko.png");
+        //else
+        //    imgSur = new ImageIcon("C:\\Users\\jerem\\Documents\\NetBeansProjects\\Prog.Concurrente2020\\src\\test\\java\\TP6\\EJ_5\\Trafico\\Franchesko.png");
         
         auto = new JLabel();
         fondo.add(auto);
@@ -35,7 +35,21 @@ public class AutoSurVisual {
         auto.setBounds(posIni, 160, 100, 62);
     }
 
-    public void manejar() throws InterruptedException {
+    public void manejarPrimera() throws InterruptedException {
+        int nuevaPos = posIni;
+        int primerLimite = posIni - 150;;
+        
+        while(nuevaPos >= primerLimite){
+            nuevaPos = nuevaPos - 5;
+            
+            auto.setBounds(nuevaPos, 160, 100, 62);
+            Thread.sleep(velocidad * 15);
+        }
+        
+        posIni = nuevaPos;
+    }
+    
+    public void manejarSegunda() throws InterruptedException {
         int nuevaPos = posIni;
         
         while(nuevaPos >= limite){
@@ -48,12 +62,13 @@ public class AutoSurVisual {
     
     public void llegar() throws InterruptedException {
         int nuevaPos = 1200;
+        int llegada = (int) Math.random() * 10 + 1;
         
         while(nuevaPos >= posIni){
             nuevaPos = nuevaPos - 3;
             
             auto.setBounds(nuevaPos, 160, 100, 62);
-            Thread.sleep(velocidad * 20);
+            Thread.sleep(llegada * 20);
         }
     }
 }
