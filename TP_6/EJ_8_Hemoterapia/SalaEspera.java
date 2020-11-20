@@ -71,10 +71,7 @@ public class SalaEspera {
                         if (turno == turnoActual) {
                             tomo = tomarRevista();
                             esperaCama.await();
-                            if (tomo) {
-                                esperaRevista.signalAll();
-                                /*NOTA AL PIE, REVISALA!!!*/
-                            }
+                            esperaRevista.signalAll(); /*NOTA AL PIE, REVISALA!!!*/
                         } else {
                             if (revistas > 0) {
                                 tomo = tomarRevista();
