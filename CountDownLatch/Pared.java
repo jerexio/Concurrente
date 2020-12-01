@@ -21,8 +21,7 @@ public class Pared {
     
     public void construirPared(String nombre) throws InterruptedException{
         
-        if(pared.getCount() > 0)
-            pared.await();
+        pared.await();
         
         System.out.println(nombre+" Correr");
     }
