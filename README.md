@@ -1,4 +1,4 @@
 Concurrente
 PROGRAMACION CONCURRENTE JAVA
 
-Navegue por las branch para ver lo realizado
+Navegue por las branches para ver lo realizado
